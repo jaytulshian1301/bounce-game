@@ -2,6 +2,7 @@
 2. better looking gui
 3. start, pause, restart buttons
 4. organize Game.py
+5. Read me file
 
 ########## version 2 ############
 
