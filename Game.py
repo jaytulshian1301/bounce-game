@@ -2,15 +2,11 @@ from GameArea import GameArea
 from Bat import Bat
 from Ball import Ball
 import tkinter as tk
+import time
 
 
 class Game:
     def __init__(self):
-        def circleCoords():
-            return self.ball.posX - self.ball.radius, self.ball.posY - self.ball.radius, self.ball.posX + self.ball.radius, self.ball.posY + self.ball.radius
-
-        def rectangleCoords():
-            return self.bat.posX-self.bat.length//2, self.bat.posY - self.bat.breadth//2, self.bat.posX + self.bat.length//2, self.bat.posY + self.bat.breadth//2
 
         def toggleStartBounce(e):
             self.startBounce = True
@@ -25,12 +21,10 @@ class Game:
         self.sidebar = tk.Frame(
             self.win, height=self.sheet.height, width=150, bg="#219ebc")
         self.sidebar.pack_propagate(0)
+        self.batitem = None
+        self.ballitem = None
         self.win.geometry(f"{self.sheet.width + 150}x{self.sheet.height}")
         self.win.title("BOUNCE")
-        x0, y0, x1, y1 = circleCoords()
-        self.ballitem = self.canvas.create_oval(x0, y0, x1, y1)
-        x0, y0, x1, y1 = rectangleCoords()
-        self.batitem = self.canvas.create_rectangle(x0, y0, x1, y1)
         self.win.bind("<KeyPress-Left>", self.bat.leftArrowDown)
         self.win.bind("<KeyRelease-Left>", self.bat.leftArrowUp)
         self.win.bind("<KeyPress-Right>", self.bat.rightArrowDown)
@@ -47,6 +41,7 @@ class Game:
             self.canvas.coords(self.ballitem, self.ball.posX - self.ball.radius, self.ball.posY -
                                self.ball.radius, self.ball.posX + self.ball.radius, self.ball.posY + self.ball.radius)
             self.ball.updateVelocityBat(self.bat.reflectedAngle())
+            time.sleep(0.01)
             self.win.update()
 
     def update(self):
@@ -74,40 +69,50 @@ class Game:
         def bounceBat():
             self.ball.updateVelocityBat(self.bat.reflectedAngle())
 
-        if(key == "End"):
+        if("End" in key):
             self.endGame()
-        elif(key == "Bat"):
+        if("Bat" in key):
             bounceBat()
-        elif(key == "HWall"):
+        if("HWall" in key):
             bounceWall(0)
-        elif(key == "VWall"):
+        if("VWall" in key):
             bounceWall(1)
-        else:
-            pass
 
     def checkBounce(self):
+        l = []
+
         def checkBatBounce():
             left = self.bat.posX - self.bat.length//2 - self.ball.radius
             right = self.bat.posX + self.bat.length//2 - self.ball.radius
             if((self.ball.posX >= left and self.ball.posX <= right) and self.ball.posY >= self.bat.posY - self.bat.breadth//2-self.ball.radius):
                 return True
 
-        if(self.ball.posY == self.sheet.height - self.ball.radius):
-            return 'End'
-        elif(checkBatBounce()):
-            return 'Bat'
+        if(self.ball.posY >= self.sheet.height - self.ball.radius):
+            l.append('End')
 
-        elif(self.ball.posY <= 0 + self.ball.radius):
-            return "HWall"
-        elif(self.ball.posX <= 0 + self.ball.radius or self.ball.posX >= self.sheet.width - self.ball.radius):
-            return "VWall"
+        if(checkBatBounce()):
+            l.append('Bat')
+
+        if(self.ball.posY <= 0 + self.ball.radius):
+            l.append("HWall")
+        if(self.ball.posX <= 0 + self.ball.radius or self.ball.posX >= self.sheet.width - self.ball.radius):
+            l.append("VWall")
+        return l
 
     def startGame(self):
         self.gameOn = True
+        if(not self.ballitem or not self.batitem):
+            ballcoords = self.ball.coords()
+            self.ballitem = self.canvas.create_oval(
+                ballcoords[0], ballcoords[1], ballcoords[2], ballcoords[3], fill="black")
+            batcoords = self.bat.coords()
+            self.batitem = self.canvas.create_rectangle(
+                batcoords[0], batcoords[1], batcoords[2], batcoords[3], fill="purple")
         self.prephase()
         # add the spacebar event handler and run the next line in that
         while(self.gameOn):
             self.update()
+            time.sleep(0.001)
 
     def startApp(self):
         self.sidebar.grid(row=0, column=0)
@@ -118,11 +123,3 @@ class Game:
         stop.pack()
 
         self.win.mainloop()
-        ###############################
-
-        # self.canvas.create_oval(game., fill='pink')
-        # self.canvas.grid(row=0, column=1)
-
-        # slab = Bat()
-        # canvas.create_rectangle(slab.x0, slab.y0, slab.x1, slab.y1, fill="white")
-        # canvas.grid(row=0, column=1)

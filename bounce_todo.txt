@@ -1,0 +1,9 @@
+1. scores, highscore validation
+2. better looking gui
+3. start, pause, restart buttons
+4. organize Game.py
+
+########## version 2 ############
+
+1. bricks
+2. powerups

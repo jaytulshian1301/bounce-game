@@ -6,12 +6,12 @@ import math
 class Ball:
 
     def __init__(self, sheet: GameArea):
-        self.radius = 20
+        self.radius = 15
         self.posX = 450
         self.posY = 680 - self.radius
         self.vy = 0
         self.vx = 0
-        self.v = 0.1
+        self.v = 7
         self.sheet = sheet
 
     # def updateTheta(self,momentum):
@@ -29,10 +29,13 @@ class Ball:
         self.posX = newPosX
         self.posY = newPosY
 
+    def coords(self):
+        return (self.posX - self.radius, self.posY - self.radius, self.posX + self.radius, self.posY + self.radius)
+
     def move(self):
         self.posY += self.vy
         self.posY = min(self.sheet.height - self.radius, self.posY)
-        self.posY = max(0, self.posY)
+        self.posY = max(0+self.radius, self.posY)
         self.posX += self.vx
-        self.posX = max(0, self.posX)
+        self.posX = max(0+self.radius, self.posX)
         self.posX = min(self.sheet.width - self.radius, self.posX)
