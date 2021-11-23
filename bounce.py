@@ -1,8 +1,6 @@
 ## This file is the main game file ##
-import tkinter as tk
-from Game import Game
+from TkGame import TkGame
 
 
-game = Game()
-
+game = TkGame()
 game.startApp()
